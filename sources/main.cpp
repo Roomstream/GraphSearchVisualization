@@ -1,7 +1,9 @@
 #include "raylib.h"
+#include "raymath.h"
 #define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
 #include <vector>
+#include <string>
 #define SCREEN_WIDTH (1920)
 #define SCREEN_HEIGHT (1080)
 
@@ -19,9 +21,7 @@ int main(void)
     {
         BeginDrawing();
         ClearBackground(RAYWHITE);
-        //const int texture_x = SCREEN_WIDTH / 2 - texture.width / 2;
-        //const int texture_y = SCREEN_HEIGHT / 2 - texture.height / 2;
-
+        
         Vector2 mousePosition = GetMousePosition();
         //DrawTexture(texture, texture_x, texture_y, WHITE);
         if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON) == true)
@@ -35,9 +35,25 @@ int main(void)
         }
         for (Vector2 ballCenter : ballCenters) 
         {
-            DrawCircleV(ballCenter, 50, BEIGE);
+            float radius = 50;
+            Color color = BEIGE;
+            if (Vector2Distance(ballCenter, mousePosition) <= radius)
+            {
+                color = BROWN;
+            }
+            DrawCircleV(ballCenter, 50, color);
         }
-        
+        const Vector2 text_size = MeasureTextEx(GetFontDefault(), " ", 20, 1);
+        std::string text = std::to_string(mousePosition.x) + " " + std::to_string(mousePosition.y);
+        DrawText(text.c_str(), 3, 3, 20, BLACK);
+
+        for (int i = 0; i < ballCenters.size(); i++) 
+        {
+            Vector2 ballCenter = ballCenters[i];
+            std::string text = std::to_string(ballCenter.x) + " " + std::to_string(ballCenter.y);
+            DrawText(text.c_str(), 3, 3 + text_size.y * (i + 1), 20, BLACK);
+        }
+
         if (GuiButton(Rectangle{ 24, 24, 120, 30 }, "#191#Show Message")) showMessageBox = true;
 
         if (showMessageBox)
@@ -47,10 +63,6 @@ int main(void)
 
             if (result >= 0) showMessageBox = false;
         }
-
-        //const char* text = "OMG! IT WORKS!";
-        //const Vector2 text_size = MeasureTextEx(GetFontDefault(), text, 20, 1);
-        //DrawText(text, SCREEN_WIDTH / 2 - text_size.x / 2, texture_y + texture.height + text_size.y + 10, 20, BLACK);
 
         EndDrawing();
     }
