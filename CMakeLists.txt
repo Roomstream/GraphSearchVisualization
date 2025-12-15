@@ -29,7 +29,10 @@ message(STATUS ${fetch_raygui_SOURCE_DIR})
 target_include_directories(raygui INTERFACE ${fetch_raygui_SOURCE_DIR}/src)
 
 # Adding our source files
-file(GLOB_RECURSE PROJECT_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_LIST_DIR}/sources/*.cpp") # Define PROJECT_SOURCES as a list of all source files
+file(GLOB_RECURSE PROJECT_SOURCES CONFIGURE_DEPENDS 
+    "${CMAKE_CURRENT_LIST_DIR}/sources/*.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/sources/*.hpp"
+) # Define PROJECT_SOURCES as a list of all source files
 set(PROJECT_INCLUDE "${CMAKE_CURRENT_LIST_DIR}/sources/") # Define PROJECT_INCLUDE to be the path to the include directory of the project
 
 # Declaring our executable
