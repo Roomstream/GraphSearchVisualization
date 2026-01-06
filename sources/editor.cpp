@@ -28,7 +28,7 @@ void Editor::tick()
         m_ballCenters[m_vertexMove.vertex] = offset + m_vertexMove.startPosVertex;
         hoveredVertex = m_vertexMove.vertex;
     }
-    
+
     for (int i = 0; i < m_ballCenters.size(); i++)
     {
         Vector2 ballCenter = m_ballCenters[i];
@@ -37,9 +37,18 @@ void Editor::tick()
         
         DrawCircleV(ballCenter, 50, color);
     }
+
     if (hoveredVertex != -1)
     {
         DrawCircleV(m_ballCenters[hoveredVertex], 50, BROWN);
+
+    }
+    for (int i = 0; i < m_ballCenters.size(); i++) 
+    {
+        Vector2 ballCenter = m_ballCenters[i];
+        std::string label = std::to_string(i);
+        Vector2 size = MeasureTextEx(GetFontDefault(), label.c_str(), 20, 1);
+        DrawText(label.c_str(), ballCenter.x - size.x / 2, ballCenter.y - size.y / 2, 20, BLACK);
     }
     printVertices();
 }
