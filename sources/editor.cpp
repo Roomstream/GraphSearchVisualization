@@ -14,6 +14,12 @@ void Editor::tick()
         {
             m_ballCenters.push_back(mousePosition);
         }
+        else if (IsKeyDown(KEY_LEFT_CONTROL) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)
+            && hoveredVertex >= 0)
+        {
+            m_currentAction = Action::CreateEdge;
+            m_createEdgeData.vertex = hoveredVertex;
+        }
         else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && hoveredVertex >= 0)
         {
             m_vertexMove.vertex = hoveredVertex;
@@ -31,6 +37,14 @@ void Editor::tick()
         Vector2 offset = mousePosition - m_vertexMove.startPosCursor;
         m_ballCenters[m_vertexMove.vertex] = offset + m_vertexMove.startPosVertex;
         hoveredVertex = m_vertexMove.vertex;
+    }
+    else if (m_currentAction == Action::CreateEdge) 
+    {
+        DrawLineEx(m_ballCenters[m_createEdgeData.vertex], mousePosition, 10, BEIGE);
+        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
+        {
+            m_currentAction = Action::None;
+        }
     }
 
     for (int i = 0; i < m_ballCenters.size(); i++)

@@ -25,9 +25,16 @@ private:
 
 	struct VertexMoveData
 	{
-		int vertex = -1;
+		int vertex;
 		Vector2 startPosCursor;
 		Vector2 startPosVertex;
 	};
 	VertexMoveData m_vertexMove;
+
+	struct CreateEdgeData 
+	{
+		int vertex;
+	};
+	CreateEdgeData m_createEdgeData;
+
 };
