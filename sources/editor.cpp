@@ -7,23 +7,27 @@ void Editor::tick()
 {
     Vector2 mousePosition = GetMousePosition();
     int hoveredVertex = getHoveredVertex();
-    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && m_vertexMove.vertex == -1)
-    {
-        m_ballCenters.push_back(mousePosition);
-    }
-    else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && hoveredVertex >= 0)
-    {
-        m_vertexMove.vertex = hoveredVertex;
-        m_vertexMove.startPosCursor = mousePosition;
-        m_vertexMove.startPosVertex = m_ballCenters[hoveredVertex];
-    }
-    else if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && m_vertexMove.vertex != -1) 
-    {
-        m_vertexMove.vertex = -1;
-    }
 
-    if (m_vertexMove.vertex != -1) 
+    if (m_currentAction == Action::None) 
     {
+        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
+        {
+            m_ballCenters.push_back(mousePosition);
+        }
+        else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && hoveredVertex >= 0)
+        {
+            m_vertexMove.vertex = hoveredVertex;
+            m_vertexMove.startPosCursor = mousePosition;
+            m_vertexMove.startPosVertex = m_ballCenters[hoveredVertex];
+            m_currentAction = Action::MoveVertex;
+        }
+    }
+    else if (m_currentAction == Action::MoveVertex) 
+    {
+        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
+        {
+            m_currentAction = Action::None;
+        }
         Vector2 offset = mousePosition - m_vertexMove.startPosCursor;
         m_ballCenters[m_vertexMove.vertex] = offset + m_vertexMove.startPosVertex;
         hoveredVertex = m_vertexMove.vertex;
