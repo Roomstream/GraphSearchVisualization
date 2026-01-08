@@ -67,15 +67,15 @@ void Editor::tick()
         Color color = BEIGE;
         
         DrawCircleV(ballCenter, 50, color);
+        std::string label = std::to_string(i);
+        Vector2 size = MeasureTextEx(GetFontDefault(), label.c_str(), 20, 1);
+        DrawText(label.c_str(), ballCenter.x - size.x / 2, ballCenter.y - size.y / 2, 20, BLACK);
     }
     if (hoveredVertex != -1)
     {
-        DrawCircleV(m_vertexCoords[hoveredVertex], 50, BROWN);
-    }
-    for (int i = 0; i < m_vertexCoords.size(); i++)
-    {
-        Vector2 ballCenter = m_vertexCoords[i];
-        std::string label = std::to_string(i);
+        Vector2 ballCenter = m_vertexCoords[hoveredVertex];
+        DrawCircleV(ballCenter, 50, BROWN);
+        std::string label = std::to_string(hoveredVertex);
         Vector2 size = MeasureTextEx(GetFontDefault(), label.c_str(), 20, 1);
         DrawText(label.c_str(), ballCenter.x - size.x / 2, ballCenter.y - size.y / 2, 20, BLACK);
     }
