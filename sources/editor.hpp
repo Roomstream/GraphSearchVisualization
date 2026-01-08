@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "raylib.h"
+#include "graph.hpp"
 
 
 class Editor
@@ -12,7 +13,6 @@ private:
 
 	int getHoveredVertex();
 	void printVertices();
-	std::vector<Vector2> m_ballCenters;
 
 	enum class Action
 	{
@@ -31,10 +31,13 @@ private:
 	};
 	VertexMoveData m_vertexMove;
 
-	struct CreateEdgeData 
+	struct CreateEdgeData
 	{
 		int vertex;
 	};
 	CreateEdgeData m_createEdgeData;
+
+	std::vector<Vector2> m_vertexCoords;
+	Graph m_graph;
 
 };
