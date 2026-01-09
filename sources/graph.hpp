@@ -2,6 +2,12 @@
 
 #include <vector>
 #include <cassert>
+struct Edge 
+{
+	int vert1;
+	int vert2;
+};
+
 struct Graph 
 {
 	std::vector<std::vector<int>> neighbours;

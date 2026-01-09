@@ -4,7 +4,9 @@
 #include "raylib.h"
 #include "graph.hpp"
 
-
+static const float EDGE_WIDTH = 10.0f;
+static const float VERTEX_RADIUS = 50.0f;
+static const float FONT_SIZE = 20.0f;
 class Editor
 {
 public:
@@ -12,6 +14,7 @@ public:
 private:
 
 	int getHoveredVertex();
+	Edge getHoveredEdge();
 	void printVertices();
 
 	enum class Action
