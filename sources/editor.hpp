@@ -42,5 +42,5 @@ private:
 
 	std::vector<Vector2> m_vertexCoords;
 	Graph m_graph;
-
+	Vector2 m_rightClickPos;
 };

@@ -22,4 +22,19 @@ struct Graph
 	{
 		neighbours.push_back(std::vector<int>());
 	}
+	void eraseVert(int idx) 
+	{
+		neighbours.erase(neighbours.begin() + idx);
+		for (int i = 0; i < neighbours.size(); i++)
+		{
+			std::erase(neighbours[i], idx);
+			for (int& value : neighbours[i]) 
+			{
+				if (value > idx)
+				{
+					value = value - 1;
+				}
+			}
+		}
+	}
 };

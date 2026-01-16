@@ -1,7 +1,7 @@
 #include "editor.hpp"
 #include <string>
 #include "raymath.h"
-
+#include "raygui.h"
 
 void Editor::tick()
 {
@@ -84,7 +84,18 @@ void Editor::tick()
         Vector2 size = MeasureTextEx(GetFontDefault(), label.c_str(), FONT_SIZE, 1);
         DrawText(label.c_str(), ballCenter.x - size.x / 2, ballCenter.y - size.y / 2, FONT_SIZE, BLACK);
     }
-
+    if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) && hoveredVertex >= 0) 
+    {
+        m_rightClickPos = mousePosition;
+    }
+    GuiButton(Rectangle{ m_rightClickPos.x, m_rightClickPos.y, 120, 30 }, "Delete vertex");
+    if (GuiButton(Rectangle{ m_rightClickPos.x, m_rightClickPos.y, 120, 30 }, "Delete vertex")) 
+    {
+        m_vertexCoords.erase(m_vertexCoords.begin() + hoveredVertex);
+        m_graph.eraseVert(hoveredVertex);
+    }
+    GuiButton(Rectangle{ m_rightClickPos.x, m_rightClickPos.y + 30, 120, 30 }, "Set start");
+    GuiButton(Rectangle{ m_rightClickPos.x, m_rightClickPos.y + 30*2, 120, 30 }, "Set finish");
     printVertices();
 }
 
