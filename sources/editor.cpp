@@ -3,13 +3,13 @@
 #include "raymath.h"
 #include "raygui.h"
 
-void Editor::tick()
+void Editor::processCurrentAction() 
 {
     Vector2 mousePosition = GetMousePosition();
     int hoveredVertex = getHoveredVertex();
     Edge hoveredEdge = getHoveredEdge();
 
-    if (m_currentAction == Action::None) 
+    if (m_currentAction == Action::None)
     {
         if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
         {
@@ -29,8 +29,22 @@ void Editor::tick()
             m_vertexMove.startPosVertex = m_vertexCoords[hoveredVertex];
             m_currentAction = Action::MoveVertex;
         }
+        else if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) && hoveredVertex >= 0)
+        {
+            m_contextMenuData.rightClickPos = mousePosition;
+            m_contextMenuData.oldHoveredVertex = hoveredVertex;
+            m_contextMenuData.type = ContextMenuType::Vertex;
+            m_currentAction = Action::ContextMenu;
+        }
+        else if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) && hoveredEdge.vert1 >= 0) 
+        {
+            m_contextMenuData.rightClickPos = mousePosition;
+            m_contextMenuData.oldHoveredEdge = hoveredEdge;
+            m_contextMenuData.type = ContextMenuType::Edge;
+            m_currentAction = Action::ContextMenu;
+        }
     }
-    else if (m_currentAction == Action::MoveVertex) 
+    else if (m_currentAction == Action::MoveVertex)
     {
         if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
         {
@@ -42,7 +56,6 @@ void Editor::tick()
     }
     else if (m_currentAction == Action::CreateEdge)
     {
-        DrawLineEx(m_vertexCoords[m_createEdgeData.vertex], mousePosition, EDGE_WIDTH, BEIGE);
         if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
         {
             m_currentAction = Action::None;
@@ -52,6 +65,46 @@ void Editor::tick()
             }
         }
     }
+    else if (m_currentAction == Action::ContextMenu)
+    {
+        Rectangle rectangle{
+            m_contextMenuData.rightClickPos.x,
+            m_contextMenuData.rightClickPos.y, 120, 30 };
+        if (m_contextMenuData.type == ContextMenuType::Edge)
+        {
+            if (GuiButton(rectangle, "Delete edge"))
+            {
+                m_graph.eraseEdge(m_contextMenuData.oldHoveredEdge.vert1, m_contextMenuData.oldHoveredEdge.vert2);
+                m_currentAction = Action::None;
+            }
+        }
+        if (m_contextMenuData.type == ContextMenuType::Vertex)
+        {
+            if (GuiButton(rectangle, "Set start"))
+            {
+                start = m_contextMenuData.oldHoveredVertex;
+                m_currentAction = Action::None;
+            }
+            rectangle.y = rectangle.y + 30;
+            if (GuiButton(rectangle, "Delete vertex"))
+            {
+                m_vertexCoords.erase(m_vertexCoords.begin() + m_contextMenuData.oldHoveredVertex);
+                m_graph.eraseVert(m_contextMenuData.oldHoveredVertex);
+                m_currentAction = Action::None;
+            }
+        }
+        if (IsKeyPressed(KEY_ESCAPE)) 
+        {
+            m_currentAction = Action::None;
+        }
+    }
+}
+
+void Editor::tick()
+{
+    Vector2 mousePosition = GetMousePosition();
+    int hoveredVertex = getHoveredVertex();
+    Edge hoveredEdge = getHoveredEdge();
 
     for (int i = 0; i < m_graph.neighbours.size(); i++)
     {
@@ -64,7 +117,10 @@ void Editor::tick()
     {
         DrawLineEx(m_vertexCoords[hoveredEdge.vert1], m_vertexCoords[hoveredEdge.vert2], EDGE_WIDTH, BROWN);
     }
-
+    if (m_currentAction == Action::CreateEdge) 
+    {
+        DrawLineEx(m_vertexCoords[m_createEdgeData.vertex], mousePosition, EDGE_WIDTH, BEIGE);
+    }
     for (int i = 0; i < m_vertexCoords.size(); i++)
     {
         Vector2 ballCenter = m_vertexCoords[i];
@@ -84,19 +140,10 @@ void Editor::tick()
         Vector2 size = MeasureTextEx(GetFontDefault(), label.c_str(), FONT_SIZE, 1);
         DrawText(label.c_str(), ballCenter.x - size.x / 2, ballCenter.y - size.y / 2, FONT_SIZE, BLACK);
     }
-    if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) && hoveredVertex >= 0) 
-    {
-        m_rightClickPos = mousePosition;
-    }
-    GuiButton(Rectangle{ m_rightClickPos.x, m_rightClickPos.y, 120, 30 }, "Delete vertex");
-    if (GuiButton(Rectangle{ m_rightClickPos.x, m_rightClickPos.y, 120, 30 }, "Delete vertex")) 
-    {
-        m_vertexCoords.erase(m_vertexCoords.begin() + hoveredVertex);
-        m_graph.eraseVert(hoveredVertex);
-    }
-    GuiButton(Rectangle{ m_rightClickPos.x, m_rightClickPos.y + 30, 120, 30 }, "Set start");
-    GuiButton(Rectangle{ m_rightClickPos.x, m_rightClickPos.y + 30*2, 120, 30 }, "Set finish");
+
     printVertices();
+
+    processCurrentAction();
 }
 
 int Editor::getHoveredVertex()
@@ -120,7 +167,7 @@ Edge Editor::getHoveredEdge()
         for (int j = 0; j < m_graph.neighbours[i].size(); j++)
         {
             if (CheckCollisionPointLine(GetMousePosition(),
-                m_vertexCoords[i], m_vertexCoords[m_graph.neighbours[i][j]], EDGE_WIDTH / 2.f)) 
+                m_vertexCoords[i], m_vertexCoords[m_graph.neighbours[i][j]], EDGE_WIDTH / 2.f))
             {
                 Edge edge;
                 edge.vert1 = i;

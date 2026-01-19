@@ -16,12 +16,20 @@ private:
 	int getHoveredVertex();
 	Edge getHoveredEdge();
 	void printVertices();
+	void processCurrentAction();
 
 	enum class Action
 	{
 		None,
 		MoveVertex,
 		CreateEdge,
+		ContextMenu,
+	};
+
+	enum class ContextMenuType
+	{
+		Vertex,
+		Edge,
 	};
 
 	Action m_currentAction = Action::None;
@@ -39,8 +47,17 @@ private:
 		int vertex;
 	};
 	CreateEdgeData m_createEdgeData;
-
+	
+	int start;
+	//bool ifButtonPressed = false;
 	std::vector<Vector2> m_vertexCoords;
 	Graph m_graph;
-	Vector2 m_rightClickPos;
+	struct ContextMenuData
+	{
+		Vector2 rightClickPos;
+		int oldHoveredVertex;
+		Edge oldHoveredEdge;
+		ContextMenuType type;
+	};
+	ContextMenuData m_contextMenuData;
 };

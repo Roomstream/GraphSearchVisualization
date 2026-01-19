@@ -15,12 +15,14 @@
 int main(void)
 {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, WINDOW_TITLE);
+    SetExitKey(0);
     SetTargetFPS(120);
 
     //Texture2D texture = LoadTexture(ASSETS_PATH"test.png"); // Check README.md for how this works
     bool showMessageBox = false;
     
     Editor editor;
+
     while (!WindowShouldClose())
     {
         BeginDrawing();
