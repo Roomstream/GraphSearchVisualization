@@ -2,6 +2,7 @@
 #include <string>
 #include "raymath.h"
 #include "raygui.h"
+#include <iostream>
 
 void Editor::processCurrentAction() 
 {
@@ -59,7 +60,7 @@ void Editor::processCurrentAction()
         if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
         {
             m_currentAction = Action::None;
-            if (hoveredVertex != -1)
+            if (hoveredVertex != -1 && m_graph.hasEdge(hoveredVertex, m_createEdgeData.vertex) == false)
             {
                 m_graph.addEdge(hoveredVertex, m_createEdgeData.vertex);
             }
@@ -84,6 +85,15 @@ void Editor::processCurrentAction()
             {
                 start = m_contextMenuData.oldHoveredVertex;
                 m_currentAction = Action::None;
+                auto onEnter = [](int vert)
+                    {
+                        std::cout << "Entered " << vert << std::endl;
+                    };
+                auto onLeave = [](int vert)
+                    {
+                        std::cout << "Leaved " << vert << std::endl;
+                    };
+                DFS(start, m_graph, onEnter, onLeave);
             }
             rectangle.y = rectangle.y + 30;
             if (GuiButton(rectangle, "Delete vertex"))
