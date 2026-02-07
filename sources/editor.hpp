@@ -3,6 +3,7 @@
 #include <vector>
 #include "raylib.h"
 #include "graph.hpp"
+#include "search_visualizer.hpp"
 
 static const float EDGE_WIDTH = 10.0f;
 static const float VERTEX_RADIUS = 50.0f;
@@ -12,7 +13,6 @@ class Editor
 public:
 	void tick();
 private:
-
 	int getHoveredVertex();
 	Edge getHoveredEdge();
 	void printVertices();
@@ -60,4 +60,6 @@ private:
 		ContextMenuType type;
 	};
 	ContextMenuData m_contextMenuData;
+	SearchVisualizer m_searchVisualizer;
+	int m_step = 0;
 };

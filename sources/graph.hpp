@@ -49,7 +49,7 @@ struct Graph
 			}
 		}
 	}
-	void eraseEdge(int vert1, int vert2) 
+	void eraseEdge(int vert1, int vert2)
 	{
 		std::erase(neighbours[vert1], vert2);
 		std::erase(neighbours[vert2], vert1);

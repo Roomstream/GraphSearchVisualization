@@ -3,6 +3,7 @@
 #include "raymath.h"
 #include "raygui.h"
 #include <iostream>
+#include "search_visualizer.hpp"
 
 void Editor::processCurrentAction() 
 {
@@ -85,15 +86,7 @@ void Editor::processCurrentAction()
             {
                 start = m_contextMenuData.oldHoveredVertex;
                 m_currentAction = Action::None;
-                auto onEnter = [](int vert)
-                    {
-                        std::cout << "Entered " << vert << std::endl;
-                    };
-                auto onLeave = [](int vert)
-                    {
-                        std::cout << "Leaved " << vert << std::endl;
-                    };
-                DFS(start, m_graph, onEnter, onLeave);
+                m_searchVisualizer.DFS(start, m_graph);
             }
             rectangle.y = rectangle.y + 30;
             if (GuiButton(rectangle, "Delete vertex"))
@@ -127,7 +120,7 @@ void Editor::tick()
     {
         DrawLineEx(m_vertexCoords[hoveredEdge.vert1], m_vertexCoords[hoveredEdge.vert2], EDGE_WIDTH, BROWN);
     }
-    if (m_currentAction == Action::CreateEdge) 
+    if (m_currentAction == Action::CreateEdge)
     {
         DrawLineEx(m_vertexCoords[m_createEdgeData.vertex], mousePosition, EDGE_WIDTH, BEIGE);
     }
@@ -136,8 +129,28 @@ void Editor::tick()
         Vector2 ballCenter = m_vertexCoords[i];
         float radius = VERTEX_RADIUS;
         Color color = BEIGE;
-        
-        DrawCircleV(ballCenter, VERTEX_RADIUS, color);
+
+        if (m_searchVisualizer.getStepsNum() == 0)
+        {
+            DrawCircleV(ballCenter, VERTEX_RADIUS, color);
+        }
+        else
+        {
+            SearchVisualizer::VertexState state = m_searchVisualizer.getStateForVertex(m_step, i);
+            if (state == SearchVisualizer::VertexState::nonProcessed)
+            {
+                color = PURPLE;
+            }
+            else if (state == SearchVisualizer::VertexState::partiallyProcessed)
+            {
+                color = RED;
+            }
+            else if (state == SearchVisualizer::VertexState::processed)
+            {
+                color = GREEN;
+            }
+            DrawCircleV(ballCenter, VERTEX_RADIUS, color);
+        }
         std::string label = std::to_string(i);
         Vector2 size = MeasureTextEx(GetFontDefault(), label.c_str(), FONT_SIZE, 1);
         DrawText(label.c_str(), ballCenter.x - size.x / 2, ballCenter.y - size.y / 2, FONT_SIZE, BLACK);
@@ -152,6 +165,12 @@ void Editor::tick()
     }
 
     printVertices();
+    Rectangle rectangle;
+    rectangle.x = 100;
+    rectangle.y = 100;
+    rectangle.width = 300;
+    rectangle.height = 30;
+    GuiSpinner(rectangle, "Step", &m_step, 0, m_searchVisualizer.getStepsNum(), true);
 
     processCurrentAction();
 }
