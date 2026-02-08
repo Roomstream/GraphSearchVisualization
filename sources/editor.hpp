@@ -24,6 +24,7 @@ private:
 		MoveVertex,
 		CreateEdge,
 		ContextMenu,
+		StepVisualization,
 	};
 
 	enum class ContextMenuType

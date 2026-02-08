@@ -84,8 +84,9 @@ void Editor::processCurrentAction()
         {
             if (GuiButton(rectangle, "Set start"))
             {
+                m_step = 0;
                 start = m_contextMenuData.oldHoveredVertex;
-                m_currentAction = Action::None;
+                m_currentAction = Action::StepVisualization;
                 m_searchVisualizer.DFS(start, m_graph);
             }
             rectangle.y = rectangle.y + 30;
@@ -99,6 +100,21 @@ void Editor::processCurrentAction()
         if (IsKeyPressed(KEY_ESCAPE)) 
         {
             m_currentAction = Action::None;
+        }
+    }
+    else if (m_currentAction == Action::StepVisualization) 
+    {
+        Rectangle rectangle;
+        rectangle.x = 100;
+        rectangle.y = 100;
+        rectangle.width = 300;
+        rectangle.height = 30;
+        GuiSpinner(rectangle, "Step", &m_step, 0, m_searchVisualizer.getStepsNum() - 1, false);
+
+        if (IsKeyPressed(KEY_ESCAPE))
+        {
+            m_currentAction = Action::None;
+            m_searchVisualizer.clear();
         }
     }
 }
@@ -137,17 +153,17 @@ void Editor::tick()
         else
         {
             SearchVisualizer::VertexState state = m_searchVisualizer.getStateForVertex(m_step, i);
-            if (state == SearchVisualizer::VertexState::nonProcessed)
+            if (state == SearchVisualizer::VertexState::partiallyProcessed)
             {
-                color = PURPLE;
-            }
-            else if (state == SearchVisualizer::VertexState::partiallyProcessed)
-            {
-                color = RED;
+                color = YELLOW;
             }
             else if (state == SearchVisualizer::VertexState::processed)
             {
                 color = GREEN;
+            }
+            if (m_searchVisualizer.getCurrVertex(m_step) == i)
+            {
+                color = BLUE;
             }
             DrawCircleV(ballCenter, VERTEX_RADIUS, color);
         }
@@ -165,12 +181,6 @@ void Editor::tick()
     }
 
     printVertices();
-    Rectangle rectangle;
-    rectangle.x = 100;
-    rectangle.y = 100;
-    rectangle.width = 300;
-    rectangle.height = 30;
-    GuiSpinner(rectangle, "Step", &m_step, 0, m_searchVisualizer.getStepsNum(), true);
 
     processCurrentAction();
 }

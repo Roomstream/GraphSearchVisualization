@@ -75,5 +75,8 @@ public:
 	{
 		return m_steps[step].m_vertexStates[vert];
 	}
-
+	int getCurrVertex(int step)
+	{
+		return m_steps[step].vertex;
+	}
 };
