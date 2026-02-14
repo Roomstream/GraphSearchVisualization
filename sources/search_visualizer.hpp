@@ -44,14 +44,13 @@ public:
 			if (vertexStates[neighbour] == VertexState::nonProcessed)
 			{
 				DFS2(neighbour, graph, vertexStates);
+				step.m_vertexStates = vertexStates;
+				step.type = SearchStep::Type::LeaveVertex;
+				m_steps.push_back(step);
 			}
 		}
 
 		vertexStates[currVert] = VertexState::processed;
-
-		step.m_vertexStates = vertexStates;
-		step.type = SearchStep::Type::LeaveVertex;
-		m_steps.push_back(step);
 	}
 
 	void DFS(int currVert, const Graph& graph)
