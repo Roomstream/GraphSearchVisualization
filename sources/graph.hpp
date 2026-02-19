@@ -62,6 +62,10 @@ struct Graph
 	{
 		return neighbours.size();
 	}
+	void clear() 
+	{
+		neighbours.clear();
+	}
 };
 void DFS2(int currVert, const Graph& graph, std::vector<bool>& isVisited,
 	const std::function<void (int)>& onEnter, const std::function<void(int)>& onLeave);

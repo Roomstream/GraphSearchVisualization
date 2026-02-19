@@ -17,6 +17,8 @@ private:
 	Edge getHoveredEdge();
 	void printVertices();
 	void processCurrentAction();
+	void save();
+	void load();
 
 	enum class Action
 	{

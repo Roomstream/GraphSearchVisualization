@@ -4,6 +4,7 @@
 #include "raygui.h"
 #include <iostream>
 #include "search_visualizer.hpp"
+#include <fstream>
 
 void Editor::processCurrentAction() 
 {
@@ -13,6 +14,23 @@ void Editor::processCurrentAction()
 
     if (m_currentAction == Action::None)
     {
+        //Библиотека графов
+        Rectangle rectangle{
+           10,
+           250, 120, 30 };
+
+        if (GuiButton(rectangle, "save graph")) 
+        {
+            save();
+            return;
+        }
+        rectangle.y += 30;
+        if (GuiButton(rectangle, "load graph"))
+        {
+            load();
+            return;
+        }
+
         if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
         {
             m_vertexCoords.push_back(mousePosition);
@@ -230,5 +248,42 @@ void Editor::printVertices()
         Vector2 ballCenter = m_vertexCoords[i];
         std::string text = std::to_string(ballCenter.x) + " " + std::to_string(ballCenter.y);
         DrawText(text.c_str(), 3, 3 + text_size.y * (i + 1), FONT_SIZE, BLACK);
+    }
+}
+void Editor::save() 
+{
+    //Сохранение графа в файл
+    std::ofstream out;
+    out.open("graph.txt");
+    if (out.is_open()) 
+    {
+        out << m_vertexCoords.size() << std::endl;
+        for (int i = 0; i < m_vertexCoords.size(); i++) 
+        {
+            out << m_vertexCoords[i].x << ' ' << m_vertexCoords[i].y << std::endl;
+        }
+    }
+    out.close();
+}
+void Editor::load() 
+{
+    //Загрузка графа из файла
+    std::ifstream in("graph.txt");
+    if (in.is_open()) 
+    {
+        int countVert;
+        in >> countVert;
+
+        m_graph.clear();
+        m_vertexCoords.clear();
+
+        for (int i = 0; i < countVert; i++) 
+        {
+            Vector2 coords;
+            in >> coords.x >> coords.y;
+            m_vertexCoords.push_back(coords);
+            m_graph.addVertex();
+        }
+        in.close();
     }
 }
