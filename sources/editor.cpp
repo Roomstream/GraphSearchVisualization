@@ -79,7 +79,10 @@ void Editor::processCurrentAction()
         if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
         {
             m_currentAction = Action::None;
-            if (hoveredVertex != -1 && m_graph.hasEdge(hoveredVertex, m_createEdgeData.vertex) == false)
+            bool shouldAddEdge = hoveredVertex != -1 
+                && !m_graph.hasEdge(hoveredVertex, m_createEdgeData.vertex)
+                && hoveredVertex != m_createEdgeData.vertex;
+            if (shouldAddEdge)
             {
                 m_graph.addEdge(hoveredVertex, m_createEdgeData.vertex);
             }
@@ -262,6 +265,21 @@ void Editor::save()
         {
             out << m_vertexCoords[i].x << ' ' << m_vertexCoords[i].y << std::endl;
         }
+        for (int i = 0; i < m_graph.neighbours.size(); i++) 
+        {
+            out << i << " " << m_graph.neighbours[i].size() << ": ";
+            for (int j = 0; j < m_graph.neighbours[i].size(); j++) 
+            {
+                out << m_graph.neighbours[i][j] << ' ';
+                /*
+                0 2: 1 2
+                1 2: 0 2
+                2 3: 3 1 0
+                */
+            }
+
+            out << std::endl;
+        }
     }
     out.close();
 }
@@ -283,6 +301,20 @@ void Editor::load()
             in >> coords.x >> coords.y;
             m_vertexCoords.push_back(coords);
             m_graph.addVertex();
+        }
+        for (int i = 0; i < m_graph.neighbours.size(); i++) 
+        {
+            int parent;
+            int countNeigh;
+            char c;
+            in >> parent >> countNeigh >> c;
+
+            for (int j = 0; j < countNeigh; j++)
+            {
+                int neighbour;
+                in >> neighbour;
+                m_graph.addEdge(parent, neighbour);
+            }
         }
         in.close();
     }
