@@ -155,7 +155,10 @@ void Editor::processCurrentAction()
         if (m_vertexCoords.empty() || graphIdx != oldGraphIdx || oldStart != start)
         {
             m_step = stepSliderValue = 0.0f;
-            startSliderValue = 0.0f;
+            if (oldStart == start) 
+            {
+                start = startSliderValue = 0.0f;
+            }
             std::stringstream data(embeddedGraphs[graphIdx]);
             load(data);
             m_searchVisualizer.DFS(start, m_graph);
