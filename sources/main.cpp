@@ -10,16 +10,16 @@
 
 #define SCREEN_WIDTH (1920)
 #define SCREEN_HEIGHT (1080)
-#define WINDOW_TITLE "Window title"
+#define WINDOW_TITLE "Graph Demo"
 
 int main(void)
 {
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+    SetConfigFlags(FLAG_WINDOW_HIGHDPI);
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, WINDOW_TITLE);
     SetExitKey(0);
     SetTargetFPS(120);
 
-    //Texture2D texture = LoadTexture(ASSETS_PATH"test.png"); // Check README.md for how this works
-    
     Editor editor;
 
     while (!WindowShouldClose())
@@ -30,9 +30,6 @@ int main(void)
         editor.tick();
         
         Vector2 mousePosition = GetMousePosition();
-        //DrawTexture(texture, texture_x, texture_y, WHITE);
-        std::string text = std::to_string(mousePosition.x) + " " + std::to_string(mousePosition.y);
-        DrawText(text.c_str(), 3, 3, 20, BLACK);
 
         EndDrawing();
     }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sstream>
 #include <vector>
 #include "raylib.h"
 #include "graph.hpp"
@@ -7,7 +8,12 @@
 
 static const float EDGE_WIDTH = 10.0f;
 static const float VERTEX_RADIUS = 50.0f;
+#if TARGET_PHONE
+static const float FONT_SIZE = 40.0f;
+#else
 static const float FONT_SIZE = 20.0f;
+#endif
+
 class Editor
 {
 public:
@@ -19,6 +25,7 @@ private:
 	void processCurrentAction();
 	void save();
 	void load();
+	void load(std::stringstream& data);
 
 	enum class Action
 	{
@@ -27,6 +34,7 @@ private:
 		CreateEdge,
 		ContextMenu,
 		StepVisualization,
+		MoveCamera,
 	};
 
 	enum class ContextMenuType
@@ -51,7 +59,7 @@ private:
 	};
 	CreateEdgeData m_createEdgeData;
 	
-	int start;
+	int start = 0;
 	//bool ifButtonPressed = false;
 	std::vector<Vector2> m_vertexCoords;
 	Graph m_graph;
@@ -63,6 +71,13 @@ private:
 		ContextMenuType type;
 	};
 	ContextMenuData m_contextMenuData;
+
+	struct MoveCameraData
+	{
+		Vector2 startPosCursor;
+	};
+	MoveCameraData m_moveCameraData;
+
 	SearchVisualizer m_searchVisualizer;
 	int m_step = 0;
 };
