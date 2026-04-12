@@ -8,11 +8,9 @@
 
 static const float EDGE_WIDTH = 10.0f;
 static const float VERTEX_RADIUS = 50.0f;
-#if TARGET_PHONE
+
 static const float FONT_SIZE = 40.0f;
-#else
-static const float FONT_SIZE = 20.0f;
-#endif
+
 
 class Editor
 {
